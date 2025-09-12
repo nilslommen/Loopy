@@ -1,0 +1,10 @@
+# Leading example of the paper "On Deciding Constant Runtime of Linear Loops"
+# CONSTANT
+[
+  [],
+  [],
+  [[1, 1], [-1, -1]],
+  [0, 10],
+  [[1, 0], [0, 2]],
+  [1, 0]
+]

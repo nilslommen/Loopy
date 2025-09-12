@@ -1,0 +1,9 @@
+# Leading example of the paper "On Deciding Constant Runtime of Linear Loops"
+# CONSTANT
+(GOAL COMPLEXITY)
+(STARTTERM (FUNCTIONSYMBOLS l0))
+(VAR x1 x2)
+(RULES
+	l0(x1,x2) -> l1(x1,x2)
+  l1(x1,x2) -> l1(x1 + 1,2*x2) :|: 0 <= x1 + x2 && x1 + x2 <= 10
+)
