@@ -11,7 +11,7 @@ source sympy-env/bin/activate
 pip install sympy
 ```
 
-Afterwards, this environment be always activated by `source sympy-env/bin/activate` and deactivated by running `deactivate` in the bash.
+Afterwards, this environment can always be activated by `source sympy-env/bin/activate` and deactivated by running `deactivate` in the bash.
 
 ## Running our Tool
 The tool requires the input to be provided in matrix form.
@@ -39,7 +39,7 @@ or if you are also interested in more detailed output by
 python src/constant_runtime.py --log examples/example01.matrix
 ```
 
-Finally, we provide a tool that transforms a simplified variant of the .koat format, as used in TermComp, into the matrix representation (see below for a more detailed description).
+Finally, we provide a tool that transforms a simplified variant of the `*.koat` format, as used in TermComp, into the matrix representation (see below for a more detailed description).
 Here, `python src/its2matrix.py examples/example01.koat` prints the matrix representation to the standard output whereas `python src/its2matrix.py -o output.matrix examples/example01.koat` stores the result in the file `output.matrix`.
 
 The transition system below yields the matrix representation shown above.

@@ -76,7 +76,7 @@ def negate_t(t_terms: PolyExponential) -> PolyExponential:
 
     return result
 
-# The following four functions are useful to represent constraints as *sets* of poly-exponential functions.
+# The following four functions are useful to represent constraints as *sets* of poly-exponential expressions.
 def _canonical_summand(t: Summand) -> Summand:
     coeff, var, a, lam = t
     return (sp.simplify(coeff), var, a, sp.simplify(lam))
