@@ -26,7 +26,7 @@ For example, our leading example from paper can be represented by
     [1, 0]                  # b  (affine part of the update)
 ]
 ```
-This is also stored in the file `examples\example01.koat`.
+This is also stored in the file `examples\example01.matrix`.
 Now, our tool can be executed by the following command:
 
 ```
