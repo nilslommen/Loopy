@@ -53,7 +53,7 @@ def closed_form_to_string(pe: PolyExponential, x0: Vars, N0:int = 0) -> str:
     return "[" + "; ".join(row_strs) + "]" + f" # N0 = {N0}"
 
 
-def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponential], int]:
+def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponential], bool, int]:
     """
     Computes closed form for the affine iteration
         x_{n+1} = A x_n + b
@@ -68,6 +68,7 @@ def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponen
     P, J = A.jordan_form()
     P_inv = P.inv()
     size = A.shape[0]
+    negativ_eigenvalue = False
 
     # Compute information about every Jordan block of J:
     #  - start_index: where the block begins in J
@@ -80,6 +81,8 @@ def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponen
         lam = sp.simplify(J[idx, idx])
         if lam.is_real is False:
             raise ValueError(f"Expected real eigenvalues, got {lam} which is not real.")
+        if lam.is_real and lam.is_negative:
+            negativ_eigenvalue = True
 
         # compute block size
         m = 1
@@ -195,7 +198,7 @@ def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponen
                 coeff = sp.simplify(expr.coeff(var))
                 row_summands[r].append((coeff, var, a, lam))
 
-    return row_summands, int(N0)
+    return row_summands, negativ_eigenvalue, int(N0)
 
 def shift_poly_exponential(expr: PolyExponential, x: int, y: int) -> PolyExponential:
     """
@@ -249,7 +252,7 @@ def constraint_to_string(constraint: Constraint) -> str:
 
     return "[" + "; ".join(row_strs) + "]"
 
-def compute_constraint(C1: Matrix, c1: Vector, C2: Matrix, c2: Vector, A: Matrix, b: Vector, x0: Vars) -> Tuple[Constraint, int]:
+def compute_constraint(C1: Matrix, c1: Vector, C2: Matrix, c2: Vector, A: Matrix, b: Vector, x0: Vars) -> Tuple[Constraint, bool, int]:
     """
     Computes closed form of the guard Ci*(A x_0 + b)^n + ci.
     Here, C1 and c1 represent strict inequations whereas C2 and c2 represent inclusive inequations.
@@ -257,7 +260,7 @@ def compute_constraint(C1: Matrix, c1: Vector, C2: Matrix, c2: Vector, A: Matrix
     from logger import log_string
 
     # Get closed form for x_n as list of per-row terms
-    terms_xn, N0 = closed_form_affine(A, b, x0)
+    terms_xn, negative_eigenvalue, N0 = closed_form_affine(A, b, x0)
     log_string("closed form: " + closed_form_to_string(terms_xn,x0,N0))
 
     def projection(C: Matrix, c: Vector, type: InequationType) -> Constraint:
@@ -301,4 +304,4 @@ def compute_constraint(C1: Matrix, c1: Vector, C2: Matrix, c2: Vector, A: Matrix
 
     log_string("guard: " + constraint_to_string(all_rows))
 
-    return all_rows, N0
+    return all_rows, negative_eigenvalue, N0

@@ -19,7 +19,7 @@ if __name__ == "__main__":
     x0 = sp.Matrix(sp.symbols(f'x1:{d+1}'))
 
     from closed_form import compute_constraint
-    terms_proj, N0 = compute_constraint(C1, c1, C2, c2, A, b, x0)
+    terms_proj, negative_eigenvalue, N0 = compute_constraint(C1, c1, C2, c2, A, b, x0)
 
     from quantifier_elimination import has_constant_runtime
-    has_constant_runtime(terms_proj, x0, N0)
+    has_constant_runtime(terms_proj, x0, negative_eigenvalue, N0)

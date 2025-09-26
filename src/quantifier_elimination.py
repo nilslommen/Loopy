@@ -146,17 +146,22 @@ def eliminate_x(pi: Constraint, x: Var) -> Constraint:
 
     return set_to_constraint((pi_set | pi_res_set) - (pi_pos_set | pi_neg_set))
 
-def eliminate_vars(constraint: Constraint, x0: Vars, N0:int = 0) -> Constraint:
+def eliminate_vars(constraint: Constraint, x0: Vars, negative_eigenvalue: bool, N0: int = 0) -> Constraint:
     """
     Eliminates all variables x0 in the constraint pi in the spirit of Fourier-Motzkin.
     """
 
     from logger import log_string
+    from closed_form import shift_poly_exponential, constraint_to_string
+
+    if negative_eigenvalue:
+        constraint = [(shift_poly_exponential(expr, 0, 2), inequationType) for (expr, inequationType) in constraint]
+        log_string(f"\nNegative Eigenvalue:\nguard: {constraint_to_string(constraint)}")
+
     rb = compute_rb(constraint)
 
     log_string(f"\nQuantifier Elimination:\n\trb: {rb}")
 
-    from closed_form import shift_poly_exponential, constraint_to_string
     pi = [(shift_poly_exponential(expr, N0, k), inequationType) for k in range(rb + 1) for (expr, inequationType) in constraint]
 
     log_string("\tpi: " + constraint_to_string(pi))
@@ -167,8 +172,8 @@ def eliminate_vars(constraint: Constraint, x0: Vars, N0:int = 0) -> Constraint:
 
     return result
 
-def has_constant_runtime(constraint: Constraint, x0: Vars, N0:int = 0):
-    constraint_var_free = eliminate_vars(constraint, x0, N0)
+def has_constant_runtime(constraint: Constraint, x0: Vars, negative_eigenvalue: bool, N0: int = 0):
+    constraint_var_free = eliminate_vars(constraint, x0, negative_eigenvalue, N0)
 
     from logger import log_string
     log_string("")
