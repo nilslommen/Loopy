@@ -43,7 +43,7 @@ or if you are also interested in more detailed output by
 python src/constant_runtime.py --log examples/example01.matrix
 ```
 
-Finally, we provide a tool that transforms a simplified variant of the `*.koat` format, as used in TermComp, into the matrix representation (see below for a more detailed description).
+Moreover, to ease the writing of examples, we provide a tool that transforms a simplified variant of the `*.koat` format, as used in the termination competition (https://termination-portal.org/wiki/Termination_Competition), into the above matrix representation (see below for a more detailed description).
 Here, `python src/its2matrix.py examples/example01.koat` prints the matrix representation to the standard output whereas `python src/its2matrix.py -o output.matrix examples/example01.koat` stores the result in the file `output.matrix`.
 
 The transition system below yields the matrix representation shown above.
@@ -51,7 +51,7 @@ The transition system below yields the matrix representation shown above.
 (GOAL COMPLEXITY)
 (STARTTERM (FUNCTIONSYMBOLS l0))
 (VAR x1 x2)
-(transitionS
+(RULES
     l0(x1,x2) -> l1(x1,x2)
     l1(x1,x2) -> l1(x1 + 1,2*x2) :|: 0 <= x1 + x2 && x1 + x2 <= 10
 )
@@ -59,5 +59,5 @@ The transition system below yields the matrix representation shown above.
 
 Note that we allow arbitrary rational numbers as coefficients and restricted the transition system format to represent single-path loops in the following way:
 - The input must contain **exactly two transitions**.
-- One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain updates or guards.
-- The other transition is the **self-loop**: It is a transition whose stays at the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into matrices.
+- One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain non-identity updates or guards.
+- The other transition is the **self-loop**: It is a transition that stays in the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into the matrix representation.
