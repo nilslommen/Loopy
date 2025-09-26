@@ -26,7 +26,11 @@ For example, our leading example from paper can be represented by
     [1, 0]                  # b  (affine part of the update)
 ]
 ```
-This is also stored in the file `examples\example01.matrix`.
+This example is also stored in the file `examples\example01.matrix`.
+In general, such an example represents the loop 
+```
+while C1 x + c1 >= 0 && C2 x + c2 > 0 do x <- A x + b end
+```
 Now, our tool can be executed by the following command:
 
 ```
