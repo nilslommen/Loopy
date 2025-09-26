@@ -57,7 +57,7 @@ The transition system below yields the matrix representation shown above.
 )
 ```
 
-Note that we allow arbitrary rational numbers as coefficients and restricted the transition system format to represent single-path loops in the following way:
+Note that we allow arbitrary rational numbers as coefficients (where rational numbers can be written as fractions or in decimal notation). Moreover, we restricted the transition system format to represent single-path loops in the following way:
 - The input must contain **exactly two transitions**.
 - One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain non-identity updates or guards.
 - The other transition is the **self-loop**: It is a transition that stays in the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into the matrix representation.
