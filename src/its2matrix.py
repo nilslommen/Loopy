@@ -116,6 +116,10 @@ def parse_affine(expr_str, variables):
     expr = sp.sympify(expr_str, rational=True)
     expr = sp.expand(expr)
 
+    p = sp.Poly(expr, variables)
+    if p.total_degree() > 1:
+        raise ValueError(f"Expression is not affine: {expr_str}")
+
     coeffs = [sp.Rational(expr.coeff(v)) for v in variables]
     const = sp.Rational(expr.subs({v: 0 for v in variables}))
     return coeffs, const
