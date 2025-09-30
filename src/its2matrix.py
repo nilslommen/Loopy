@@ -113,15 +113,22 @@ def parse_affine(expr_str, variables):
     """
     Parse an affine expression and return a pair: (list of coefficients, constant)
     """
-    expr = sp.sympify(expr_str, rational=True)
+    local_dict = {str(v): v for v in variables}
+
+    expr = sp.sympify(expr_str, rational=True, locals=local_dict)
     expr = sp.expand(expr)
 
-    p = sp.Poly(expr, variables)
-    if p.total_degree() > 1:
-        raise ValueError(f"Expression is not affine: {expr_str}")
+    if variables:
+        p = sp.Poly(expr, variables)
+        if p.total_degree() > 1:
+            raise ValueError(f"Expression is not affine: {expr_str}")
 
-    coeffs = [sp.Rational(expr.coeff(v)) for v in variables] if variables else []
-    const = sp.Rational(expr)
+        coeffs = [sp.Rational(expr.coeff(v)) for v in variables]
+        const = sp.Rational(expr.subs({v: 0 for v in variables}))
+    else:
+        coeffs = []
+        const = sp.Rational(expr)
+
     return coeffs, const
 
 
