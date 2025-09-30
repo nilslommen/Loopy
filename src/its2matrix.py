@@ -120,8 +120,8 @@ def parse_affine(expr_str, variables):
     if p.total_degree() > 1:
         raise ValueError(f"Expression is not affine: {expr_str}")
 
-    coeffs = [sp.Rational(expr.coeff(v)) for v in variables]
-    const = sp.Rational(expr.subs({v: 0 for v in variables}))
+    coeffs = [sp.Rational(expr.coeff(v)) for v in variables] if variables else []
+    const = sp.Rational(expr)
     return coeffs, const
 
 
@@ -144,7 +144,8 @@ def parse_transition(transition, variables):
     m = re.search(r"\((.*)\)", rhs)
     if not m:
         raise ValueError("Invalid RHS arguments in transition: " + transition)
-    rhs_args = [a.strip() for a in m.group(1).split(",")]
+    rhs_args_str = m.group(1).strip()
+    rhs_args = [] if rhs_args_str == "" else [a.strip() for a in rhs_args_str.split(",")]
 
     # Build A, b from rhs affine polynomials
     A, b = [], []
