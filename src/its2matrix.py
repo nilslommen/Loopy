@@ -7,7 +7,7 @@ For the transition system representation
     (GOAL COMPLEXITY)
     (STARTTERM (FUNCTIONSYMBOLS l0))
     (VAR x1 x2)
-    (transitionS
+    (RULES
         l0(x1,x2) -> l1(x1,x2)
         l1(x1,x2) -> l1(x1 + 1,2*x2) :|: 0 <= x1 + x2 && x1 + x2 <= 10
     )
