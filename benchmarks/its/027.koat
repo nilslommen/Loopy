@@ -1,0 +1,7 @@
+(GOAL COMPLEXITY)
+(STARTTERM (FUNCTIONSYMBOLS l0))
+(VAR Arg_0 Arg_2 Arg_35 Arg_37 Arg_38 Arg_39 Arg_40 Arg_42 Arg_43)
+(RULES
+  l0(Arg_0,Arg_2,Arg_35,Arg_37,Arg_38,Arg_39,Arg_40,Arg_42,Arg_43) -> l1(Arg_0,Arg_2,Arg_35,Arg_37,Arg_38,Arg_39,Arg_40,Arg_42,Arg_43)
+  l1(Arg_0,Arg_2,Arg_35,Arg_37,Arg_38,Arg_39,Arg_40,Arg_42,Arg_43) -> l1(Arg_0,Arg_2,Arg_35-1,0,Arg_43,0,Arg_43,0,Arg_43) :|: 1<=Arg_2 && 2<=Arg_0 && 0<=Arg_35 && 0<=Arg_37 && Arg_37<=0 && Arg_40<=Arg_38 && Arg_38<=Arg_40 && 0<=Arg_39 && Arg_39<=0 && Arg_43<=Arg_40 && Arg_40<=Arg_43 && 0<=Arg_42 && Arg_42<=0
+)

@@ -1,0 +1,7 @@
+(GOAL COMPLEXITY)
+(STARTTERM (FUNCTIONSYMBOLS l0))
+(VAR Arg_19)
+(RULES
+  l0(Arg_19) -> l1(Arg_19)
+  l1(Arg_19) -> l1(Arg_19-1) :|: 0<=Arg_19
+)
