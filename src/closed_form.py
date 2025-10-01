@@ -60,8 +60,7 @@ def closed_form_linear(A: Matrix, x0: Vars) -> Tuple[List[PolyExponential], bool
     """
 
     # n: The symbolic variable representing the index.
-    # k: A dummy summation index (used only when evaluating finite sums like sum_{k=0}^{n-1} ...)
-    n, k = sp.symbols('n k', integer=True)
+    n = sp.symbols('n', integer=True)
 
     # Compute Jordan form A = P * J * P^{-1}.
     P, J = A.jordan_form()
