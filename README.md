@@ -27,7 +27,7 @@ For example, our leading example from paper can be represented by
 ]
 ```
 This example is also stored in the file `examples\example01.matrix`.
-In general, such an example represents the loop 
+In general, such an example represents the loop
 ```
 while C1 x + c1 >= 0 && C2 x + c2 > 0 do x <- A x + b end
 ```
@@ -61,3 +61,18 @@ Note that we allow arbitrary rational numbers as coefficients (where rational nu
 - The input must contain **exactly two transitions**.
 - One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain non-identity updates or guards.
 - The other transition is the **self-loop**: It is a transition that stays in the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into the matrix representation.
+
+## Running all Benchmarks
+
+To reproduce our evaluation, a Docker container can be built in the following way:
+```
+docker build -t loopy .
+```
+
+Now, the experiments can be run with:
+```
+docker run --rm -v "$(pwd)/benchmarks/matrix:/benchmarks" -v "$(pwd):/outputs" loopy
+```
+
+This process should take no more than five minutes. The results will be saved in the file `result_loopy.csv`.
+Afterwards, the Docker image can be removed with `docker rmi loopy`.
