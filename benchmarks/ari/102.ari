@@ -1,0 +1,11 @@
+(format LCTRS)
+(theory Ints)
+(fun l0 (-> Int Int Int))
+(fun l1 (-> Int Int Int))
+(entrypoint l0)
+(rule (l0 Arg_1 Arg_2) (l1 Arg_1 Arg_2))
+(rule
+(l1 Arg_1 Arg_2)
+(l1 Arg_1 (- Arg_2 Arg_1))
+:guard
+(<= 0 (+ 4 Arg_2)))

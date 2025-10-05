@@ -1,0 +1,32 @@
+(format LCTRS)
+(theory Ints)
+(fun l0 (-> Int Int Int Int Int Int Int Int Int Int))
+(fun l1 (-> Int Int Int Int Int Int Int Int Int Int))
+(entrypoint l0)
+(rule
+(l0 Arg_0 Arg_2 Arg_37 Arg_38 Arg_39 Arg_40 Arg_42 Arg_43 Arg_46)
+(l1 Arg_0 Arg_2 Arg_37 Arg_38 Arg_39 Arg_40 Arg_42 Arg_43 Arg_46))
+(rule
+(l1 Arg_0 Arg_2 Arg_37 Arg_38 Arg_39 Arg_40 Arg_42 Arg_43 Arg_46)
+(l1 Arg_0 Arg_2 0 Arg_43 0 Arg_43 0 Arg_43 (- Arg_46 1))
+:guard
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and (and (and (<= 2 Arg_0) (<= Arg_2 0)) (<= 0 Arg_37)) (<= Arg_37 0))
+(<= Arg_40 Arg_38))
+(<= Arg_38 Arg_40))
+(<= 0 Arg_39))
+(<= Arg_39 0))
+(<= Arg_43 Arg_40))
+(<= Arg_40 Arg_43))
+(<= 0 Arg_42))
+(<= Arg_42 0))
+(<= 0 Arg_46))
+)

@@ -1,0 +1,28 @@
+(format LCTRS)
+(theory Ints)
+(fun l0 (-> Int Int Int Int Int Int Int))
+(fun l1 (-> Int Int Int Int Int Int Int))
+(entrypoint l0)
+(rule
+(l0 Arg_0 Arg_1 Arg_2 Arg_3 Arg_5 Arg_7)
+(l1 Arg_0 Arg_1 Arg_2 Arg_3 Arg_5 Arg_7))
+(rule
+(l1 Arg_0 Arg_1 Arg_2 Arg_3 Arg_5 Arg_7)
+(l1 Arg_0 Arg_1 Arg_2 (+ 1 Arg_3) (+ 11 Arg_5) Arg_7)
+:guard
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and (<= (+ Arg_0 (* 11 Arg_3)) 122) (<= (+ Arg_0 (* 11 Arg_3)) 111))
+(<= (+ Arg_0 (* 11 Arg_3)) (+ 11 Arg_5)))
+(<= 2 Arg_3))
+(<= (+ 11 Arg_5) (+ Arg_0 (* 11 Arg_3))))
+(<= Arg_7 Arg_0))
+(<= Arg_0 Arg_7))
+(<= Arg_2 Arg_1))
+(<= Arg_1 Arg_2))
+)
