@@ -166,40 +166,56 @@ def parse_transition(transition, variables):
     C1, c1, C2, c2 = [], [], [], []
     if guard:
         def normalize_guard(cond, variables):
-
-          cond = cond.strip()
-          if ">=" in cond:
-              left, right = cond.split(">=", 1)
-              strict = False
-          elif ">" in cond:
-              left, right = cond.split(">", 1)
-              strict = True
-          elif "<=" in cond:
-              left, right = cond.split("<=", 1)
-              # flip sides: right - left >= 0
-              left, right = right, left
-              strict = False
-          elif "<" in cond:
-              left, right = cond.split("<", 1)
-              left, right = right, left
-              strict = True
-          else:
-              raise ValueError(f"Guard condition must contain one of '>', '>=', '<', '<=': {cond}")
-
-          expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
-          expr = sp.expand(expr)
-          coeffs, const = parse_affine(expr, variables)
-          return coeffs, const, strict
+            cond = cond.strip()
+            if ">=" in cond:
+                left, right = cond.split(">=", 1)
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, False)]
+            elif ">" in cond:
+                left, right = cond.split(">", 1)
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, True)]
+            elif "<=" in cond:
+                left, right = cond.split("<=", 1)
+                # flip sides: right - left >= 0
+                left, right = right, left
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, False)]
+            elif "<" in cond:
+                left, right = cond.split("<", 1)
+                left, right = right, left
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, True)]
+            elif "==" in cond:
+                left, right = cond.split("==", 1)
+                left_expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                left_expr = sp.expand(left_expr)
+                coeffs, const = parse_affine(left_expr, variables)
+                return [
+                    ([c for c in coeffs], const, False),
+                    ([-c for c in coeffs], -const, False)
+                ]
+            else:
+                raise ValueError(f"Guard condition must contain one of '>', '>=', '<', '<=', '==': {cond}")
 
         conditions = [g.strip() for g in guard.split("&&") if g.strip()]
         for cond in conditions:
-            coeffs, const, strict = normalize_guard(cond, variables)
-            if strict:
-                C1.append([c for c in coeffs])
-                c1.append(const)
-            else:
-                C2.append([c for c in coeffs])
-                c2.append(const)
+            inequalities = normalize_guard(cond, variables)
+            for coeffs, const, strict in inequalities:
+                if strict:
+                    C1.append(coeffs)
+                    c1.append(const)
+                else:
+                    C2.append(coeffs)
+                    c2.append(const)
 
 
     return [C1, c1, C2, c2, A, b]
