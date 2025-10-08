@@ -1,0 +1,44 @@
+(format LCTRS)
+(theory Ints)
+(fun f (-> Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int))
+(fun
+start
+(-> Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int))
+(entrypoint start)
+(rule
+(start x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 x_6 x_3 x_12 x x_10 x_7 x_4)
+(f x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 x_6 x_3 x_12 x x_10 x_7 x_4))
+(rule
+(f x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 x_6 x_3 x_12 x x_10 x_7 x_4)
+(f x_4 x_1 x_8 x_5 x_14 (+ 1 x_2) x_11 x x_6 x_14 x_12 x x_10 x_7 x_4)
+:guard
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and (and (> x_7 (- 1)) (> x_7 x_2)) (<= x_14 x_3))
+(<= (+ 3 x) x_3))
+(<= x x_9))
+(<= x x_13))
+(<= (+ 3 x_4) x_3))
+(<= x_4 x_9))
+(<= x_4 x_13))
+(> x_3 3))
+(> x_9 0))
+(> x_13 0))
+(> x_14 3))
+(> x 0))
+(> x_4 0))
+(<= (+ 3 x_8) x_3))
+(<= (+ 3 x_12) x_3))
+)

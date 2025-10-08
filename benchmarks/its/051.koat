@@ -1,7 +1,0 @@
-(GOAL COMPLEXITY)
-(STARTTERM (FUNCTIONSYMBOLS l0))
-(VAR Arg_80 Arg_81 Arg_82)
-(RULES
-  l0(Arg_80,Arg_81,Arg_82) -> l1(Arg_80,Arg_81,Arg_82)
-  l1(Arg_80,Arg_81,Arg_82) -> l1(Arg_80,Arg_81,Arg_82) :|: 1+Arg_82<=Arg_81 && Arg_80<=0
-)

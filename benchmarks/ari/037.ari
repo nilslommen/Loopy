@@ -1,7 +1,0 @@
-(format LCTRS)
-(theory Ints)
-(fun l0 (-> Int Int))
-(fun l1 (-> Int Int))
-(entrypoint l0)
-(rule (l0 Arg_8) (l1 Arg_8))
-(rule (l1 Arg_8) (l1 (- Arg_8 1)) :guard (<= Arg_8 0))

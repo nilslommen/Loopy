@@ -1,0 +1,219 @@
+(format LCTRS)
+(theory Ints)
+(fun
+f
+(->
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int)
+)
+(fun
+start
+(->
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int)
+)
+(entrypoint start)
+(rule
+(start
+x
+x_13
+x_22
+x_10
+x_19
+x_7
+x_16
+x_4
+x_26
+x_1
+x_14
+x_23
+x_11
+x_20
+x_8
+x_17
+x_5
+x_2
+x_24
+x_12
+x_21
+x_9
+x_18
+x_6
+x_15
+x_3
+x_25)
+(f
+x
+x_13
+x_22
+x_10
+x_19
+x_7
+x_16
+x_4
+x_26
+x_1
+x_14
+x_23
+x_11
+x_20
+x_8
+x_17
+x_5
+x_2
+x_24
+x_12
+x_21
+x_9
+x_18
+x_6
+x_15
+x_3
+x_25)
+)
+(rule
+(f
+x
+x_13
+x_22
+x_10
+x_19
+x_7
+x_16
+x_4
+x_26
+x_1
+x_14
+x_23
+x_11
+x_20
+x_8
+x_17
+x_5
+x_2
+x_24
+x_12
+x_21
+x_9
+x_18
+x_6
+x_15
+x_3
+x_25)
+(f
+x
+x_13
+1
+x_6
+x_19
+x_7
+x_16
+1
+x_13
+x_25
+x_14
+x_23
+x_11
+x_21
+(+ (- 1) x_8)
+x
+1
+x_2
+x_24
+x_12
+x_21
+x_9
+x_18
+x_6
+x_15
+x_3
+x_25)
+:guard
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and (and (> x_5 (- 1)) (< x_14 x_8)) (> x_22 (- 1)))
+(<= x_6 x_10))
+(<= (+ 6 x_6) x_17))
+(<= (+ 1 x_6) x_26))
+(<= (+ (- 2) x_13) x_10))
+(<= (+ 4 x_13) x_17))
+(<= (+ (- 1) x_13) x_26))
+(> x_10 0))
+(> x_17 6))
+(> x_26 1))
+(> x_6 0))
+(> x 6))
+(> x_13 2))
+(<= (+ 7 x_20) x_17))
+(<= (+ 7 x_1) x_17))
+(<= (+ 5 x_11) x_17))
+(<= (+ 3 x_18) x_17))
+(= x_22 x_4))
+)
