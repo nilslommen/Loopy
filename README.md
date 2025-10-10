@@ -74,5 +74,5 @@ Now, the experiments can be run with:
 docker run --rm -v "$(pwd)/benchmarks/matrix:/benchmarks" -v "$(pwd):/outputs" loopy
 ```
 
-This process should take no more than five minutes. The results will be saved in the file `result_loopy.csv`.
+This process should take no more than an hour. The results will be saved in the file `result_loopy.csv`.
 Afterwards, the Docker image can be removed with `docker rmi loopy`.
