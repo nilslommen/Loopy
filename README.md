@@ -4,7 +4,7 @@ For all algebraic computations, we use SymPy (https://www.sympy.org/).
 ## Setting up the Environment
 Python must be installed in order for the implementation to be executed.
 
-To install SymPy, an environment can be set up in following way:
+To install SymPy, an environment can be set up in the following way:
 ```
 python3 -m venv sympy-env
 source sympy-env/bin/activate
@@ -15,7 +15,7 @@ Afterwards, this environment can always be activated by `source sympy-env/bin/ac
 
 ## Running our Tool
 The tool requires the input to be provided in matrix form.
-For example, our leading example from paper can be represented by
+For example, our leading example from the paper can be represented by
 ```
 [
     [],                     # C1 (strict linear part of the guard)
@@ -37,14 +37,14 @@ Now, our tool can be executed by the following command:
 python src/constant_runtime.py examples/example01.matrix
 ```
 
-or if you are also interested in more detailed output by
+or if you are interested in more detailed output by
 
 ```
 python src/constant_runtime.py --log examples/example01.matrix
 ```
 
 Moreover, to ease the writing of examples, we provide a tool that transforms a simplified variant of the `*.koat` format, as used in the termination competition (https://termination-portal.org/wiki/Termination_Competition), into the above matrix representation (see below for a more detailed description).
-Here, `python src/its2matrix.py examples/example01.koat` prints the matrix representation to the standard output whereas `python src/its2matrix.py -o output.matrix examples/example01.koat` stores the result in the file `output.matrix`.
+Here, `python src/its2matrix.py examples/example01.koat` prints the matrix representation to the standard output, whereas `python src/its2matrix.py -o output.matrix examples/example01.koat` stores the result in the file `output.matrix`.
 
 The transition system below yields the matrix representation shown above.
 ```
