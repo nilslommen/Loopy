@@ -1,0 +1,317 @@
+(format LCTRS)
+(theory Ints)
+(fun
+f
+(->
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int)
+)
+(fun
+start
+(->
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int
+Int)
+)
+(entrypoint start)
+(rule
+(start
+x_28
+x_8
+x_21
+x_25
+x_38
+x_5
+x_18
+x_35
+x_2
+x_15
+x_32
+x_12
+x_29
+x_9
+x_22
+x_26
+x_6
+x_19
+x_36
+x_3
+x_16
+x_33
+x
+x_13
+x_30
+x_10
+x_23
+x_27
+x_7
+x_20
+x_24
+x_37
+x_4
+x_17
+x_34
+x_1
+x_14
+x_31
+x_11)
+(f
+x_28
+x_8
+x_21
+x_25
+x_38
+x_5
+x_18
+x_35
+x_2
+x_15
+x_32
+x_12
+x_29
+x_9
+x_22
+x_26
+x_6
+x_19
+x_36
+x_3
+x_16
+x_33
+x
+x_13
+x_30
+x_10
+x_23
+x_27
+x_7
+x_20
+x_24
+x_37
+x_4
+x_17
+x_34
+x_1
+x_14
+x_31
+x_11)
+)
+(rule
+(f
+x_28
+x_8
+x_21
+x_25
+x_38
+x_5
+x_18
+x_35
+x_2
+x_15
+x_32
+x_12
+x_29
+x_9
+x_22
+x_26
+x_6
+x_19
+x_36
+x_3
+x_16
+x_33
+x
+x_13
+x_30
+x_10
+x_23
+x_27
+x_7
+x_20
+x_24
+x_37
+x_4
+x_17
+x_34
+x_1
+x_14
+x_31
+x_11)
+(f
+x_1
+x_38
+x_29
+x_18
+x_38
+x_5
+x_18
+x_35
+x_2
+x_15
+x_32
+x_12
+x_29
+x_9
+x_22
+x_26
+x_15
+x_19
+x_4
+x_3
+1
+x_34
+x_5
+1
+x_26
+0
+x_23
+1
+x_7
+x_19
+x_24
+x_37
+x_4
+(+ (- 1) x_17)
+x_34
+x_1
+x_9
+x_37
+(+ (- 1) x_17))
+:guard
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and
+(and (and (> x_16 (- 1)) (> x_17 0)) (> x_27 (- 1)))
+(<= x_15 x_6))
+(> x_6 9))
+(> x_20 8))
+(> x_30 8))
+(> x_15 9))
+(> x_19 8))
+(> x_26 8))
+(<= (+ 10 x_24) x_6))
+(<= (+ 7 x_35) x_6))
+(<= (+ 5 x_32) x_6))
+(<= (+ 3 x_22) x_6))
+(<= (+ 5 x_7) x_6))
+(<= (+ 9 x_21) x_20))
+(<= (+ 9 x_31) x_20))
+(<= (+ 7 x_4) x_20))
+(<= (+ 5 x_23) x_20))
+(<= (+ 2 x_17) x_20))
+(<= (+ 4 x_28) x_20))
+(<= (+ 4 x) x_20))
+(<= (+ 9 x_14) x_30))
+(<= (+ 9 x_25) x_30))
+(<= (+ 7 x_4) x_30))
+(<= (+ 5 x_23) x_30))
+(<= (+ 2 x_17) x_30))
+(<= (+ 4 x_8) x_30))
+(<= (+ 4 x_33) x_30))
+(= x_27 x_13))
+(= 0 x_10))
+(= x_4 x_36))
+(= x_17 x_11))
+)

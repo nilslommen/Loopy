@@ -7,7 +7,7 @@ For the transition system representation
     (GOAL COMPLEXITY)
     (STARTTERM (FUNCTIONSYMBOLS l0))
     (VAR x1 x2)
-    (transitionS
+    (RULES
         l0(x1,x2) -> l1(x1,x2)
         l1(x1,x2) -> l1(x1 + 1,2*x2) :|: 0 <= x1 + x2 && x1 + x2 <= 10
     )
@@ -23,9 +23,10 @@ we obtain the matrix representation
         [1, 0]                  # b  (affine part of the update)
     ]
 
+Note that we allow arbitrary rational numbers as coefficients (where rational numbers can be written as fractions or in decimal notation). Moreover, we restricted the transition system format to represent single-path loops in the following way:
 - The input must contain **exactly two transitions**.
-- One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain updates or guards.
-- The other transition is the **self-loop**: It is a transition whose stays at the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into matrices.
+- One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain non-identity updates or guards.
+- The other transition is the **self-loop**: It is a transition that stays in the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into the matrix representation.
 """
 
 import argparse
@@ -113,11 +114,22 @@ def parse_affine(expr_str, variables):
     """
     Parse an affine expression and return a pair: (list of coefficients, constant)
     """
-    expr = sp.sympify(expr_str, rational=True)
+    local_dict = {str(v): v for v in variables}
+
+    expr = sp.sympify(expr_str, rational=True, locals=local_dict)
     expr = sp.expand(expr)
 
-    coeffs = [sp.Rational(expr.coeff(v)) for v in variables]
-    const = sp.Rational(expr.subs({v: 0 for v in variables}))
+    if variables:
+        p = sp.Poly(expr, variables)
+        if p.total_degree() > 1:
+            raise ValueError(f"Expression is not affine: {expr_str}")
+
+        coeffs = [sp.Rational(expr.coeff(v)) for v in variables]
+        const = sp.Rational(expr.subs({v: 0 for v in variables}))
+    else:
+        coeffs = []
+        const = sp.Rational(expr)
+
     return coeffs, const
 
 
@@ -140,7 +152,8 @@ def parse_transition(transition, variables):
     m = re.search(r"\((.*)\)", rhs)
     if not m:
         raise ValueError("Invalid RHS arguments in transition: " + transition)
-    rhs_args = [a.strip() for a in m.group(1).split(",")]
+    rhs_args_str = m.group(1).strip()
+    rhs_args = [] if rhs_args_str == "" else [a.strip() for a in rhs_args_str.split(",")]
 
     # Build A, b from rhs affine polynomials
     A, b = [], []
@@ -153,40 +166,56 @@ def parse_transition(transition, variables):
     C1, c1, C2, c2 = [], [], [], []
     if guard:
         def normalize_guard(cond, variables):
-
-          cond = cond.strip()
-          if ">=" in cond:
-              left, right = cond.split(">=", 1)
-              strict = False
-          elif ">" in cond:
-              left, right = cond.split(">", 1)
-              strict = True
-          elif "<=" in cond:
-              left, right = cond.split("<=", 1)
-              # flip sides: right - left >= 0
-              left, right = right, left
-              strict = False
-          elif "<" in cond:
-              left, right = cond.split("<", 1)
-              left, right = right, left
-              strict = True
-          else:
-              raise ValueError(f"Guard condition must contain one of '>', '>=', '<', '<=': {cond}")
-
-          expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
-          expr = sp.expand(expr)
-          coeffs, const = parse_affine(expr, variables)
-          return coeffs, const, strict
+            cond = cond.strip()
+            if ">=" in cond:
+                left, right = cond.split(">=", 1)
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, False)]
+            elif ">" in cond:
+                left, right = cond.split(">", 1)
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, True)]
+            elif "<=" in cond:
+                left, right = cond.split("<=", 1)
+                # flip sides: right - left >= 0
+                left, right = right, left
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, False)]
+            elif "<" in cond:
+                left, right = cond.split("<", 1)
+                left, right = right, left
+                expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                expr = sp.expand(expr)
+                coeffs, const = parse_affine(expr, variables)
+                return [(coeffs, const, True)]
+            elif "==" in cond:
+                left, right = cond.split("==", 1)
+                left_expr = sp.sympify(left, rational=True) - sp.sympify(right, rational=True)
+                left_expr = sp.expand(left_expr)
+                coeffs, const = parse_affine(left_expr, variables)
+                return [
+                    ([c for c in coeffs], const, False),
+                    ([-c for c in coeffs], -const, False)
+                ]
+            else:
+                raise ValueError(f"Guard condition must contain one of '>', '>=', '<', '<=', '==': {cond}")
 
         conditions = [g.strip() for g in guard.split("&&") if g.strip()]
         for cond in conditions:
-            coeffs, const, strict = normalize_guard(cond, variables)
-            if strict:
-                C1.append([c for c in coeffs])
-                c1.append(const)
-            else:
-                C2.append([c for c in coeffs])
-                c2.append(const)
+            inequalities = normalize_guard(cond, variables)
+            for coeffs, const, strict in inequalities:
+                if strict:
+                    C1.append(coeffs)
+                    c1.append(const)
+                else:
+                    C2.append(coeffs)
+                    c2.append(const)
 
 
     return [C1, c1, C2, c2, A, b]

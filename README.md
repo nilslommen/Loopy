@@ -4,7 +4,7 @@ For all algebraic computations, we use SymPy (https://www.sympy.org/).
 ## Setting up the Environment
 Python must be installed in order for the implementation to be executed.
 
-To install SymPy, an environment can be set up in following way:
+To install SymPy, an environment can be set up in the following way:
 ```
 python3 -m venv sympy-env
 source sympy-env/bin/activate
@@ -15,7 +15,7 @@ Afterwards, this environment can always be activated by `source sympy-env/bin/ac
 
 ## Running our Tool
 The tool requires the input to be provided in matrix form.
-For example, our leading example from paper can be represented by
+For example, our leading example from the paper can be represented by
 ```
 [
     [],                     # C1 (strict linear part of the guard)
@@ -26,34 +26,53 @@ For example, our leading example from paper can be represented by
     [1, 0]                  # b  (affine part of the update)
 ]
 ```
-This is also stored in the file `examples\example01.matrix`.
+This example is also stored in the file `examples\example01.matrix`.
+In general, such an example represents the loop
+```
+while C1 x + c1 >= 0 && C2 x + c2 > 0 do x <- A x + b end
+```
 Now, our tool can be executed by the following command:
 
 ```
 python src/constant_runtime.py examples/example01.matrix
 ```
 
-or if you are also interested in more detailed output by
+or if you are interested in more detailed output by
 
 ```
 python src/constant_runtime.py --log examples/example01.matrix
 ```
 
-Finally, we provide a tool that transforms a simplified variant of the `*.koat` format, as used in TermComp, into the matrix representation (see below for a more detailed description).
-Here, `python src/its2matrix.py examples/example01.koat` prints the matrix representation to the standard output whereas `python src/its2matrix.py -o output.matrix examples/example01.koat` stores the result in the file `output.matrix`.
+Moreover, to ease the writing of examples, we provide a tool that transforms a simplified variant of the `*.koat` format, as used in the termination competition (https://termination-portal.org/wiki/Termination_Competition), into the above matrix representation (see below for a more detailed description).
+Here, `python src/its2matrix.py examples/example01.koat` prints the matrix representation to the standard output, whereas `python src/its2matrix.py -o output.matrix examples/example01.koat` stores the result in the file `output.matrix`.
 
 The transition system below yields the matrix representation shown above.
 ```
 (GOAL COMPLEXITY)
 (STARTTERM (FUNCTIONSYMBOLS l0))
 (VAR x1 x2)
-(transitionS
+(RULES
     l0(x1,x2) -> l1(x1,x2)
     l1(x1,x2) -> l1(x1 + 1,2*x2) :|: 0 <= x1 + x2 && x1 + x2 <= 10
 )
 ```
 
-Note that we allow arbitrary rational numbers as coefficients and restricted the transition system format to represent single-path loops in the following way:
+Note that we allow arbitrary rational numbers as coefficients (where rational numbers can be written as fractions or in decimal notation). Moreover, we restricted the transition system format to represent single-path loops in the following way:
 - The input must contain **exactly two transitions**.
-- One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain updates or guards.
-- The other transition is the **self-loop**: It is a transition whose stays at the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into matrices.
+- One transition is an **initial transition**: It must start at the declared STARTTERM and move directly to the self-loop's location. The initial transition must **not** contain non-identity updates or guards.
+- The other transition is the **self-loop**: It is a transition that stays in the same location, and it may contain affine updates and an optional guard. **Only this self-loop is transformed** into the matrix representation.
+
+## Running all Benchmarks
+
+To reproduce our evaluation, a Docker container can be built in the following way:
+```
+docker build -t loopy .
+```
+
+Now, the experiments can be run with:
+```
+docker run --rm -v "$(pwd)/benchmarks/matrix:/benchmarks" -v "$(pwd):/outputs" loopy
+```
+
+This process should take no more than an hour. The results will be saved in the file `result_loopy.csv`.
+Afterwards, the Docker image can be removed with `docker rmi loopy`.

@@ -155,7 +155,7 @@ def eliminate_vars(constraint: Constraint, x0: Vars, negative_eigenvalue: bool, 
     from closed_form import shift_poly_exponential, constraint_to_string
 
     if negative_eigenvalue:
-        constraint = [(shift_poly_exponential(expr, 0, 2), inequationType) for (expr, inequationType) in constraint]
+        constraint = [(shift_poly_exponential(expr, x_shift, 2), inequationType) for (expr, inequationType) in constraint for x_shift in (0, 1)]
         log_string(f"\nNegative Eigenvalue:\nguard: {constraint_to_string(constraint)}")
 
     rb = compute_rb(constraint)

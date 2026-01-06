@@ -1,0 +1,7 @@
+(format LCTRS)
+(theory Ints)
+(fun f (-> Int Int Int Int Int))
+(fun start (-> Int Int Int Int Int))
+(entrypoint start)
+(rule (start x_2 x_3 x x_1) (f x_2 x_3 x x_1))
+(rule (f x_2 x_3 x x_1) (f x_2 x_3 x (+ 1 x_1)) :guard (<= x_1 x_3))

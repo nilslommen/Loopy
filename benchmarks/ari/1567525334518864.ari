@@ -1,0 +1,17 @@
+(format LCTRS)
+(theory Ints)
+(fun
+f
+(-> Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int))
+(fun
+start
+(-> Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int Int))
+(entrypoint start)
+(rule
+(start x_10 x_7 x_4 x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 x_6 x_15 x_3 x_12 x)
+(f x_10 x_7 x_4 x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 x_6 x_15 x_3 x_12 x))
+(rule
+(f x_10 x_7 x_4 x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 x_6 x_15 x_3 x_12 x)
+(f x_10 x_7 x_4 x_13 x_1 x_8 x_5 x_14 x_2 x_11 x_9 (+ 1 x_6) x_15 x_3 x_12 x)
+:guard
+(<= (+ 1 x_6) x_10))

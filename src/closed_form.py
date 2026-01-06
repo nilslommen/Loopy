@@ -25,7 +25,6 @@ Matrix = sp.Matrix
 Vector = sp.Matrix
 
 def closed_form_to_string(pe: PolyExponential, x0: Vars, N0:int = 0) -> str:
-
     n = sp.symbols("n", integer=True)
 
     row_strs = []
@@ -53,21 +52,20 @@ def closed_form_to_string(pe: PolyExponential, x0: Vars, N0:int = 0) -> str:
     return "[" + "; ".join(row_strs) + "]" + f" # N0 = {N0}"
 
 
-def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponential], bool, int]:
+def closed_form_linear(A: Matrix, x0: Vars) -> Tuple[List[PolyExponential], bool, int]:
     """
     Computes closed form for the affine iteration
         x_{n+1} = A x_n + b
-    where A is a square rational matrix of dimension d, b is a rational column vector, and x0 is a column vector of (sympy) symbols
+    where A is a square rational matrix of dimension d and x0 is a column vector of (sympy) symbols
     """
 
     # n: The symbolic variable representing the index.
-    # k: A dummy summation index (used only when evaluating finite sums like sum_{k=0}^{n-1} ...)
-    n, k = sp.symbols('n k', integer=True)
+    n = sp.symbols('n', integer=True)
 
     # Compute Jordan form A = P * J * P^{-1}.
     P, J = A.jordan_form()
     P_inv = P.inv()
-    size = A.shape[0]
+    d = A.shape[0]
     negativ_eigenvalue = False
 
     # Compute information about every Jordan block of J:
@@ -77,7 +75,7 @@ def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponen
     #  - N: the m x m nilpotent (super-diagonal) matrix with ones on the super-diagonal
     blocks_info = []
     idx = 0
-    while idx < size:
+    while idx < d:
         lam = sp.simplify(J[idx, idx])
         if lam.is_real is False:
             raise ValueError(f"Expected real eigenvalues, got {lam} which is not real.")
@@ -86,119 +84,124 @@ def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponen
 
         # compute block size
         m = 1
-        while idx + m < size and J[idx + m - 1, idx + m] == 1:
+        while idx + m < d and J[idx + m - 1, idx + m] == 1:
             m += 1
-        # build nilpotent matrix
-        N = sp.zeros(m)
-        for i in range(m - 1):
-            N[i, i + 1] = 1
-        blocks_info.append((idx, m, lam, N))
+
+        blocks_info.append((idx, m, lam))
         idx += m
 
     # N0 = maximum size among blocks with eigenvalue 0 (they vanish for n >= N0).
-    N0 = max((m for _, m, lam, _ in blocks_info if lam == 0), default=0)
-
-    # Collect list of tuples (lam, t, M) where M is a full-size matrix representing lam^{-t} * N^t.
-    # This will be helpful for J^n = sum_{t = 0}^{m - 1} binomial(n, t) * lam^{n - t} * N^t.
-    M_terms = []
-    for start, m, lam, N in blocks_info:
-        if lam == 0:
-            # skip pure-zero blocks: they are nilpotent and vanish for k >= N0
-            continue
-        for t in range(m):
-            # lam^{-t} * N^t  (identity when t == 0)
-            if t == 0:
-                submatrix = sp.eye(m)
-            else:
-                submatrix = sp.simplify(lam**(-t) * (N**t))
-            # lift sub-matrices to full-size matrices
-            full_matrix = sp.zeros(size)
-            for i in range(m):
-                for j in range(m):
-                    full_matrix[start + i, start + j] = submatrix[i, j]
-            # conjugate back to original basis
-            M = sp.simplify(P * full_matrix * P_inv)
-            M_terms.append((lam, t, M))
-
-    # Compute contributions from "linear" A^n x0 and from "affine" sum_{k=0}^{n-1} A^k b part
-    summands = []
-
-    for lam, t, M in M_terms:
-
-        # "linear" A^n x0 part:
-        M_vars = sp.simplify(M * x0)
-
-        # binomial(n, t) is a polynomial in n of degree t
-        binom_expr = sp.expand(sp.binomial(n, t))
-        for i in range(0, t + 1):                        # coefficients possible for degrees 0,...,t
-            coeff = sp.simplify(binom_expr.coeff(n, i))  # coefficient of n^i
-            if coeff != 0:
-                summands.append((sp.simplify(coeff * M_vars), i, lam))
+    N0 = max((m for _, m, lam in blocks_info if lam == 0), default=0)
 
 
-        # "affine" sum_{k=0}^{n-1} A^k b part:
-        coeff_vec_b = sp.simplify(M * b)
-        if coeff_vec_b == sp.zeros(size, 1):
-            continue
+    J_entries = [[[] for _ in range(d)] for _ in range(d)]
 
-        if sp.simplify(lam - 1) == 0:
-            # Case lam == 1: sum_{k = 0}^{n - 1} binomial(k, t) = binomial(n, t + 1)
+    # Compute J^n via https://en.wikipedia.org/wiki/Analytic_function_of_a_matrix#Jordan_decomposition
+    for (start, m, lam) in blocks_info:
+        for i in range(m):
+            for j in range(m):
+                r = j - i
+                if r < 0 or r >= m:
+                    J_entries[start + i][start + j] = []
+                else:
 
-            # binomial(n, t + 1) is a polynomial in n of degree t + 1
-            binom_expr = sp.simplify(sp.binomial(n, t + 1))
-            for i in range(0, t + 2):                       # coefficients possible for degrees 0,...,t + 1
-                coeff = sp.simplify(binom_expr.coeff(n, i)) # coefficient of n^i
-                if coeff != 0:
-                    summands.append((sp.simplify(coeff * coeff_vec_b), i, sp.Integer(1)))
+                    # Polynomial binomial(n,r) expanded in n
+                    if r == 0:
+                        poly = sp.Integer(1)
+                    else:
+                        poly = sp.prod([n - k for k in range(r)]) / sp.factorial(r)
+
+                    poly = sp.Poly(poly, n)
+                    deg = poly.degree()
+
+                    # Summand has the form (c_s * lam^{-r}, s, lam) representing (c_s * lam^{-r}) * n^s * lam^n
+                    summands = []
+                    if lam != 0:
+                        # For lam != 0: extract coefficients c_s of n^s in binomial(n,r)
+                        for s in range(0, deg + 1):
+                            c_s = sp.simplify(poly.coeff_monomial(n**s))
+                            # multiply by lam^{-r} so the term becomes (c_s * lam^{-r}) * n^s * lam^n
+                            coeff = sp.simplify(c_s * (lam ** (-r)))
+                            if coeff != 0:
+                                summands.append((coeff, s, lam))
+                    J_entries[start + i][start + j] = summands
+
+    # Scale summands by a scalar
+    def scale_summands(summands, scalar):
+        if scalar == 0:
+            return []
         else:
-            # Case lam != 1: Compute closed-form for sum_{k = 0}^{n - 1} binomial(k, t) * lam^k
+            return [(sp.simplify(coeff * scalar), e, lam_val) for (coeff, e, lam_val) in summands if sp.simplify(coeff * scalar) != 0]
 
-            # Tries to compute closed form expression of sum_{k = 0}^{n - 1} binomial(k, t) * lam^k
-            # https://docs.sympy.org/latest/modules/concrete.html#sympy.concrete.summations.summation
-            S = sp.simplify(sp.summation(sp.binomial(k, t) * lam**k, (k, 0, n - 1)))
+    # Compute M = P * J^n
+    M_entries = [[[] for _ in range(d)] for _ in range(d)]
+    for i in range(d):
+        for j in range(d):
+            acc = []
+            for k in range(d):
+                p_scalar = sp.simplify(P[i, k])
+                if p_scalar != 0:
+                    # scale J_entries[k][j] by p_scalar
+                    acc = acc + scale_summands(J_entries[k][j], p_scalar)
+            M_entries[i][j] = acc
 
-            # Expand closed form:
-            # https://docs.sympy.org/latest/tutorials/intro-tutorial/simplification.html#expand
-            S_expanded = sp.simplify(sp.expand(S))
+    # Compute A^n = (P * J^n) * P_inv
+    A_entries = [[[] for _ in range(d)] for _ in range(d)]
+    for i in range(d):
+        for j in range(d):
+            acc = []
+            for k in range(d):
+                pinv_scalar = sp.simplify(P_inv[k, j])
+                if pinv_scalar != 0:
+                    # scale J_entries[i][k] by pinv_scalar
+                    acc = acc + scale_summands(M_entries[i][k], pinv_scalar)
+            A_entries[i][j] = acc
 
-            # Try to isolate the lam^n term: S_expanded = coeff_n(n) * lam^n + remainder
-            coeff_n = sp.simplify(S_expanded.coeff(lam**n))
-
-            if coeff_n != 0:
-
-                for a in range(0, t + 2):
-                    c = sp.simplify(coeff_n.coeff(n, a))
-                    if c != 0:
-                        summands.append((sp.simplify(c * coeff_vec_b), a, lam))
-
-                # remainder = S - coeff_n * lam^n
-                remainder = sp.simplify(S - coeff_n * lam**n)
-                if remainder != 0:
-                    # store remainder (i.e., multiplied by 1^n)
-                    summands.append((sp.simplify(remainder * coeff_vec_b), 0, sp.Integer(1)))
-            else:
-                raise ValueError(
-                    f"Failed to extract lam^n term for eigenvalue lam={lam} with block size {t}."
-                    f"SymPy returned closed form {S_expanded}."
-                )
-
-
-    row_summands = [[] for _ in range(size)]
-
-    for coeff_vec, a, lam in summands:
-        for r in range(size):
-            expr = sp.simplify(coeff_vec[r])
-            if expr == 0:
-                continue
-            vars_in_expr = expr.free_symbols & set(x0)
-            if not vars_in_expr:
-                row_summands[r].append((sp.simplify(expr), None, a, lam))
-            else:
-                var = vars_in_expr.pop()
-                coeff = sp.simplify(expr.coeff(var))
-                row_summands[r].append((coeff, var, a, lam))
+    # Compute row_summands: A^n * x0
+    row_summands = [
+        [
+            (coeff, x0[j], e, lam)
+            for j in range(d)
+            for (coeff, e, lam) in A_entries[i][j]
+            if coeff != 0
+        ]
+        for i in range(d)
+    ]
 
     return row_summands, negativ_eigenvalue, int(N0)
+
+def closed_form_affine(A: Matrix, b: Vector, x0: Vars) -> Tuple[List[PolyExponential], bool, int]:
+    """
+    Computes closed form for the affine iteration
+        x_{n+1} = A x_n + b
+    where A is a square rational matrix of dimension d, b is a rational column vector, and x0 is a column vector of (sympy) symbols
+    """
+
+    d = A.shape[0]
+
+    # Make A x_n + b homogenous: [A b; 0 1]
+    A_hom = sp.zeros(d + 1)
+    for i in range(d):
+        for j in range(d):
+            A_hom[i, j] = sp.simplify(A[i, j])
+    for i in range(d):
+        A_hom[i, d] = sp.simplify(b[i, 0])
+    A_hom[d, d] = sp.Integer(1)
+
+    x_fresh = sp.Symbol("x_fresh")
+    x0_hom = list(x0) + [x_fresh]
+
+    row_summands_hom, negativ_eigenvalue, N0 = closed_form_linear(A_hom, x0_hom)
+
+    # Drop the last row (corresponding to x_fresh)
+    row_summands_hom = row_summands_hom[:d]
+
+    row_summands_hom = [
+        [(coeff, None if var == x_fresh else var, e, lam) for (coeff, var, e, lam) in row]
+        for row in row_summands_hom
+    ]
+
+    return row_summands_hom, negativ_eigenvalue, int(N0)
 
 def shift_poly_exponential(expr: PolyExponential, x: int, y: int) -> PolyExponential:
     """

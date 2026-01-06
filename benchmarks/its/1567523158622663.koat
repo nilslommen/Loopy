@@ -1,0 +1,7 @@
+(GOAL COMPLEXITY)
+(STARTTERM (FUNCTIONSYMBOLS start))
+(VAR x_2 x x_9 x_6 x_3 x_7 x_4 x_1 x_8 x_5)
+(RULES
+start(x_2,x,x_9,x_6,x_3,x_7,x_4,x_1,x_8,x_5) -> f(x_2,x,x_9,x_6,x_3,x_7,x_4,x_1,x_8,x_5)
+f(x_2,x,x_9,x_6,x_3,x_7,x_4,x_1,x_8,x_5) -> f(x_2,x,x_3,x_6,x_3,x_7,x_4,1+x_1,x_8,x_5) :|: x_5>=x_1 && x_8>x_5 && x_3<=x_9 && x_9>2 && x_3>2
+)

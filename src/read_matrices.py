@@ -57,8 +57,12 @@ def read_matrices_from_file(filename):
     d = A.shape[0]
     if A.shape != (d, d):
         raise ValueError("A must be square (d x d).")
-    if b.shape != (d, 1):
-        raise ValueError(f"b must be d x 1 (got {b.shape}, expected {(d,1)}).")
+    if d == 0:
+        if b.shape != (0, 0) and b.shape != (0, 1):
+            raise ValueError(f"b must be empty or 0x1 when d=0 (got {b.shape}).")
+    else:
+        if b.shape != (d, 1):
+            raise ValueError(f"b must be d x 1 (got {b.shape}, expected {(d,1)}).")
     if C1.rows > 0 and C1.cols > 0:
         if C1.shape[1] != d:
             raise ValueError(f"C1 must have d columns (got {C1.shape[1]}, expected {d}).")
