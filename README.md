@@ -29,7 +29,7 @@ For example, our leading example from the paper can be represented by
 This example is also stored in the file `examples\example01.matrix`.
 In general, such an example represents the loop
 ```
-while C1 x + c1 >= 0 && C2 x + c2 > 0 do x <- A x + b end
+while C1 x + c1 > 0 && C2 x + c2 >= 0 do x <- A x + b end
 ```
 Now, our tool can be executed by the following command:
 
@@ -64,6 +64,11 @@ Note that we allow arbitrary rational numbers as coefficients (where rational nu
 
 ## Running all Benchmarks
 
+For our evaluation, we used the benchmarks only with linear arithmetic from this [paper](https://doi.org/10.1007/978-3-030-45190-5_4) (see [here](https://zenodo.org/records/3676348) for the benchmarks).
+We transformed the `.koat`-files into the `.ari`-format using the [ITS-converter](https://github.com/TermCOMP/its-conversion).
+Moreover, we used our Python script `src/its2matrix.py` to transform `.koat`-files (with the above mentioned restrictions) into the matrix representation.
+Afterwards, we removed all duplicates which have the same matrix representation.
+
 To reproduce our evaluation, a Docker container can be built in the following way:
 ```
 docker build -t loopy .
@@ -76,3 +81,4 @@ docker run --rm -v "$(pwd)/benchmarks/matrix:/benchmarks" -v "$(pwd):/outputs" l
 
 This process should take no more than an hour. The results will be saved in the file `result_loopy.csv`.
 Afterwards, the Docker image can be removed with `docker rmi loopy`.
+See our [artifact](https://zenodo.org/records/18188082), for more information on how to run the other tools.
