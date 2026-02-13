@@ -42,9 +42,9 @@ def read_matrices_from_file(filename):
         first = obj[0] if len(obj) > 0 else None
         first_is_row = isinstance(first, (list, tuple)) or getattr(first, "is_List", False)
         if not first_is_row:
-            return sp.Matrix([[sp.sympify(e, rational=True)] for e in obj])
+            return sp.Matrix([[sp.sympify(str(e), rational=True)] for e in obj])
 
-        return sp.Matrix([[sp.sympify(e, rational=True) for e in row] for row in obj])
+        return sp.Matrix([[sp.sympify(str(e), rational=True) for e in row] for row in obj])
 
     C1 = to_matrix(parsed[0])
     c1 = to_matrix(parsed[1])
